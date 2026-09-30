@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { getJSON } from '../api'
+import { fmtDims } from '../format'
 
 const items = ref([])
 const err = ref('')
@@ -23,7 +24,7 @@ onMounted(async () => {
       <li v-for="b in items" :key="b.id">
         <router-link :to="`/boxes/${b.id}`">{{ b.name }}</router-link>
         <span class="meta">
-          {{ b.length }}×{{ b.width }}×{{ b.height }} m
+          {{ fmtDims(b.length, b.width, b.height) }}
           <span class="pill" :class="{ warn: b.data_quality === 'dirty' }">
             {{ b.data_quality === 'dirty' ? '脏数据' : '可用' }}
           </span>

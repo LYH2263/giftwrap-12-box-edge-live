@@ -296,6 +296,40 @@ select {
   color: var(--ink);
 }
 
+input {
+  width: 7.5rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.dim-form {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px dashed rgba(184, 151, 59, 0.45);
+}
+
+.saved {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.ok-mark {
+  color: var(--ok);
+}
+
 button,
 .btn {
   display: inline-flex;

@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { getJSON, postJSON } from '../api'
+import { fmtDims } from '../format'
 import BoxUnfold from '../components/BoxUnfold.vue'
 
 const boxes = ref([])
@@ -39,13 +40,14 @@ async function go(save) {
     <p class="lede">先试算看面积与展开，确认后再写入用纸档。</p>
     <div class="row">
       <select v-model.number="bid">
-        <option v-for="b in boxes" :key="b.id" :value="b.id">{{ b.name }}</option>
+        <option v-for="b in boxes" :key="b.id" :value="b.id">{{ b.name }} — {{ fmtDims(b.length, b.width, b.height) }}</option>
       </select>
       <button :disabled="busy" @click="go(false)">试算</button>
       <button class="ribbon" :disabled="busy" @click="go(true)">写入用纸档</button>
     </div>
     <p v-if="err" class="bad">{{ err }}</p>
     <div v-if="out" class="result-board">
+      <p class="stat-line">按主数据当前三边 {{ fmtDims(out.box.length, out.box.width, out.box.height) }} 试算</p>
       <div class="figure">{{ out.paper_m2 }}<span>m²</span></div>
       <p class="stat-line" v-if="out.ribbon">
         十字丝带约 {{ out.ribbon.ribbon_m ?? out.ribbon }} m
