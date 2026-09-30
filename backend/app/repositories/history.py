@@ -2,6 +2,11 @@ import json
 from datetime import datetime, timezone
 from app.db import connect
 
+def _decode(row):
+    d = dict(row)
+    d["result"] = json.loads(d.pop("result_json"))
+    return d
+
 def insert_run(box_id, overlap, result, note=""):
     c = connect()
     try:
@@ -18,14 +23,24 @@ def list_runs(limit=50):
     c = connect()
     try:
         rows = c.execute(
-            """SELECT r.*, b.name box_name FROM calc_runs r LEFT JOIN boxes b ON b.id=r.box_id ORDER BY r.id DESC LIMIT ?""",
+            """SELECT r.*, b.name box_name, b.length cur_length, b.width cur_width, b.height cur_height,
+                      b.data_quality box_quality
+               FROM calc_runs r LEFT JOIN boxes b ON b.id=r.box_id ORDER BY r.id DESC LIMIT ?""",
             (limit,),
         ).fetchall()
-        out = []
-        for row in rows:
-            d = dict(row)
-            d["result"] = json.loads(d.pop("result_json"))
-            out.append(d)
-        return out
+        return [_decode(r) for r in rows]
+    finally:
+        c.close()
+
+def get_run(run_id):
+    c = connect()
+    try:
+        row = c.execute(
+            """SELECT r.*, b.name box_name, b.length cur_length, b.width cur_width, b.height cur_height,
+                      b.data_quality box_quality
+               FROM calc_runs r LEFT JOIN boxes b ON b.id=r.box_id WHERE r.id=?""",
+            (run_id,),
+        ).fetchone()
+        return _decode(row) if row else None
     finally:
         c.close()

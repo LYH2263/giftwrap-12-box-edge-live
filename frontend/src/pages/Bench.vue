@@ -1,13 +1,16 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { getJSON, postJSON } from '../api'
+import { dims } from '../format'
 import BoxUnfold from '../components/BoxUnfold.vue'
 
 const boxes = ref([])
-const bid = ref(1)
+const bid = ref(null)
 const out = ref(null)
 const err = ref('')
 const busy = ref(false)
+
+const selected = computed(() => boxes.value.find((b) => b.id === bid.value) ?? null)
 
 onMounted(async () => {
   try {
@@ -36,19 +39,21 @@ async function go(save) {
 <template>
   <div class="page">
     <h1>算纸</h1>
-    <p class="lede">先试算看面积与展开，确认后再写入用纸档。</p>
+    <p class="lede">先试算看面积与展开，确认后再写入用纸档。尺寸以主数据为准、当场生效。</p>
     <div class="row">
       <select v-model.number="bid">
-        <option v-for="b in boxes" :key="b.id" :value="b.id">{{ b.name }}</option>
+        <option v-for="b in boxes" :key="b.id" :value="b.id">{{ b.name }}（{{ dims(b) }}）</option>
       </select>
+      <span v-if="selected" class="meta dim-tag">{{ dims(selected) }}</span>
       <button :disabled="busy" @click="go(false)">试算</button>
       <button class="ribbon" :disabled="busy" @click="go(true)">写入用纸档</button>
     </div>
     <p v-if="err" class="bad">{{ err }}</p>
     <div v-if="out" class="result-board">
+      <p class="meta">{{ out.box.name }}　{{ dims(out.box) }}</p>
       <div class="figure">{{ out.paper_m2 }}<span>m²</span></div>
       <p class="stat-line" v-if="out.ribbon">
-        十字丝带约 {{ out.ribbon.ribbon_m ?? out.ribbon }} m
+        {{ out.ribbon.wrap_style === 'band' ? '带状' : '十字' }}丝带约 {{ out.ribbon.ribbon_m }} m
       </p>
       <BoxUnfold
         :l="out.box.length"

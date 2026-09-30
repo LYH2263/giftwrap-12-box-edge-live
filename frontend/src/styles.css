@@ -500,6 +500,55 @@ button.ribbon:hover {
   font-size: 0.92rem;
 }
 
+/* —— dimension edit form —— */
+.dim-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: flex-end;
+  margin-top: 1.1rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.dim-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+}
+
+.dim-form input {
+  width: 7.5rem;
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.85);
+  font: inherit;
+  color: var(--ink);
+}
+
+.dim-form input:focus {
+  outline: none;
+  border-color: var(--wash-b);
+}
+
+.dim-form button {
+  margin-left: 0;
+}
+
+.ok {
+  color: var(--ok);
+  font-weight: 600;
+}
+
+.dim-tag {
+  font-size: 0.95rem;
+}
+
 @keyframes brandIn {
   from {
     opacity: 0;

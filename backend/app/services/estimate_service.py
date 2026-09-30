@@ -9,8 +9,20 @@ def run_estimate(box_id: int, overlap: float | None, wrap_style: str, save: bool
     if box.get("data_quality") == "dirty":
         raise HTTPException(422, "dirty box")
     ov = float(overlap) if overlap is not None else settings_repo.get_overlap()
-    calc = paper_area(box["length"], box["width"], box["height"], ov)
-    ribbon = ribbon_estimate(box["length"], box["width"], box["height"], wrap_style)
-    payload = {**calc, "ribbon": ribbon, "box_id": box_id}
+    try:
+        calc = paper_area(box["length"], box["width"], box["height"], ov)
+        ribbon = ribbon_estimate(box["length"], box["width"], box["height"], wrap_style)
+    except ValueError:
+        raise HTTPException(422, "box dimensions must be positive")
+    # 新预览跟主数据；落库时把当时三边一起写进快照，旧 run 不受日后改尺寸影响。
+    payload = {
+        "box_id": box_id,
+        "box_name": box["name"],
+        "length": box["length"],
+        "width": box["width"],
+        "height": box["height"],
+        **calc,
+        "ribbon": ribbon,
+    }
     run_id = history.insert_run(box_id, ov, payload, note) if save else None
     return {"box": box, "run_id": run_id, **calc, "ribbon": ribbon}

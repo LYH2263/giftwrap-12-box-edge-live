@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { getJSON } from '../api'
+import { dims } from '../format'
 
 const items = ref([])
 const err = ref('')
@@ -17,13 +18,13 @@ onMounted(async () => {
 <template>
   <div class="page">
     <h1>礼盒清单</h1>
-    <p class="lede">可进详情看展开外形；脏数据会标出，不算入试算候选。</p>
+    <p class="lede">可进详情改三边、看展开外形；脏数据会标出，不算入试算候选。</p>
     <p v-if="err" class="bad">{{ err }}</p>
     <ul v-else class="item-list">
       <li v-for="b in items" :key="b.id">
         <router-link :to="`/boxes/${b.id}`">{{ b.name }}</router-link>
         <span class="meta">
-          {{ b.length }}×{{ b.width }}×{{ b.height }} m
+          {{ dims(b) }}
           <span class="pill" :class="{ warn: b.data_quality === 'dirty' }">
             {{ b.data_quality === 'dirty' ? '脏数据' : '可用' }}
           </span>
